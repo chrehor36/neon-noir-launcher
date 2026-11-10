@@ -5,6 +5,8 @@ launcher. It has a hairline analog clock, a dock of up to six favorite apps, a L
 built around the turntable and your Discogs collection, Art Mode (also the TV's screensaver) after 15 idle minutes, and a night mode on a
 schedule you set (9 PM to 6 AM by default). Dark mode is the default and light mode is one button away.
 
+![Home, dark mode](docs/screenshots/home.png)
+
 This is one person's home screen, shared for anyone who wants to build their own. Take whatever is useful.
 
 Target TV: TCL 75QM7L Pro (Google TV 14, 4K).
