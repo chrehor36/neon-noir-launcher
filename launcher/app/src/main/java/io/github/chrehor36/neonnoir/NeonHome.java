@@ -273,7 +273,9 @@ final class NeonHome extends FrameLayout {
     private TextView dayText(int color) {
         TextView t = ui.text(50, color, ui.regular);
         t.setLetterSpacing(0.42f);
-        t.setAllCaps(true);
+        // Never cut the day name short: with wide letter spacing Android can measure the word a few pixels
+        // narrower than it draws and show "TUES…". The text is uppercased in updateDay() for the same reason.
+        t.setEllipsize(null);
         // Letter-spacing adds space after the last letter too; the same space before it keeps the word centered.
         t.setPadding(Math.round(m(50) * 0.42f), 0, 0, 0);
         return t;
@@ -384,7 +386,7 @@ final class NeonHome extends FrameLayout {
 
     private void updateDay() {
         Date now = new Date();
-        String dayName = new SimpleDateFormat("EEEE", Locale.getDefault()).format(now);
+        String dayName = new SimpleDateFormat("EEEE", Locale.getDefault()).format(now).toUpperCase(Locale.getDefault());
         for (TextView t : new TextView[]{dayGold, dayRed, dayMain}) t.setText(dayName);
         String date = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(now);
         String weather = NeonSky.now(getContext()).weather;
