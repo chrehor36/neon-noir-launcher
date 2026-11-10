@@ -7,6 +7,13 @@ schedule you set (9 PM to 6 AM by default). Dark mode is the default and light m
 
 ![Home, dark mode](docs/screenshots/home.png)
 
+**Your record collection on your TV.** Neon Noir reads your [Discogs](https://www.discogs.com) collection and
+picks tonight's record from it: the jazz, crooners and vocal pop you own. The pick is on the Home screen, and
+Jazz mode puts it on the turntable, where Pick another chooses a different one for the rest of the day. The
+collection is read again every Sunday at midnight, so new records show up within a week. All it needs is your
+Discogs username (and an optional token) in `secrets.properties`. As far as we could find, it's the only TV home
+screen that does this.
+
 This is one person's home screen, shared for anyone who wants to build their own. Take whatever is useful.
 
 Target TV: TCL 75QM7L Pro (Google TV 14, 4K).
