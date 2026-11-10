@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home · More – Picks and Scores (Neon Noir)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&amp;family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#E2B04A}a:hover{color:#F0BC72}
+@keyframes rain{from{background-position:0 0}to{background-position:-120px 720px}}
+@keyframes flicker{0%,92%,100%{opacity:1}93%{opacity:0.55}95%{opacity:1}97%{opacity:0.7}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-24px) scale(1.08)}}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; box-sizing: border-box; background: #0A0606; color: #F3ECE4; font-family: Arimo, 'Helvetica Neue', Helvetica, sans-serif; position: relative; overflow: hidden; {{nightFilter}}">
+  <div aria-hidden="true" style="position: absolute; width: 760px; height: 760px; right: -160px; top: -300px; border-radius: 50%; background: radial-gradient(circle, rgba(168, 19, 29, 0.50) 0%, rgba(0, 0, 0, 0) 65%); animation: drift 24s ease-in-out infinite"></div>
+  <div aria-hidden="true" style="position: absolute; width: 680px; height: 680px; left: -200px; top: 60px; border-radius: 50%; background: radial-gradient(circle, rgba(40, 80, 150, 0.26) 0%, rgba(0, 0, 0, 0) 65%); animation: drift 30s ease-in-out infinite reverse"></div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; background-image: repeating-linear-gradient(105deg, rgba(240, 200, 170, 0.06) 0px, rgba(240, 200, 170, 0.06) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 22px); background-size: 120px 720px; animation: rain 1.6s linear infinite; pointer-events: none"></div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0px, rgba(0, 0, 0, 0.18) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px); pointer-events: none"></div>
+  <div style="position: relative; height: 100%; box-sizing: border-box; padding: 26px 64px 34px; display: flex; flex-direction: column; gap: 22px">
+  <a href="HomeNoirCrimsonFrost.dc.html" style="align-self: center; display: flex; align-items: center; gap: 8px; font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: #BBA38C; text-decoration: none">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg>
+    Back to Home
+  </a>
+  <div style="display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: baseline; gap: 18px"><div style="font-size: 26px; letter-spacing: 0.32em; text-transform: uppercase; text-shadow: -1px 0 rgba(224, 38, 46, 0.5), 1px 0 rgba(226, 176, 74, 0.5)">Picks for you</div><div style="font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: #BBA38C">Popular on your services · opens to the title</div></div>
+    <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 18px">
+      <sc-for list="{{picks}}" as="p" hint-placeholder-count="7">
+        <button onClick="{{p.pick}}" aria-label="{{p.title}}" style="{{p.style}}">
+          <div style="flex: 1; background: linear-gradient(160deg, #2A0C0A, #120505); border-bottom: 1px solid rgba(226, 176, 74, 0.2); display: flex; align-items: center; justify-content: center; font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: #7E6A5A">Poster</div>
+          <div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 3px; text-align: left">
+            <div style="font-size: 15px; font-weight: 700; color: #F3ECE4; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.title}}</div>
+            <div style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #E2B04A">{{p.service}}</div>
+          </div>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: baseline; gap: 18px"><div style="font-size: 26px; letter-spacing: 0.32em; text-transform: uppercase; text-shadow: -1px 0 rgba(224, 38, 46, 0.5), 1px 0 rgba(226, 176, 74, 0.5)">Scores</div><div style="font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: #BBA38C">Your teams · live, upcoming, final</div></div>
+    <div style="display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 18px">
+      <div style="border-radius: 2px; clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px); background: rgba(22, 7, 7, {{glassA}}); border: 1px solid rgba(226, 176, 74, 0.38); box-shadow: 0 0 18px rgba(226, 176, 74, 0.12), inset 0 1px 0 rgba(255, 236, 214, 0.16), 0 14px 32px rgba(0, 0, 0, 0.4); padding: 18px 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; color: #E2B04A"><div style="width: 9px; height: 9px; border-radius: 50%; background: #E0533B; box-shadow: 0 0 8px rgba(224, 83, 59, 0.6)"></div>LIVE · [Q3 · 4:12]</div>
+        <div style="display: grid; grid-template-columns: 1fr repeat(4, 34px) 50px; gap: 6px 8px; align-items: center; font-size: 16px">
+          <div style="color: #BBA38C; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase">Team</div><div style="color: #BBA38C; text-align: center">1</div><div style="color: #BBA38C; text-align: center">2</div><div style="color: #BBA38C; text-align: center">3</div><div style="color: #BBA38C; text-align: center">4</div><div style="color: #BBA38C; text-align: right">T</div>
+          <div style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em">[Away team]</div><div style="text-align: center">[–]</div><div style="text-align: center">[–]</div><div style="text-align: center">[–]</div><div style="text-align: center">–</div><div style="text-align: right; font-weight: 700; font-size: 20px">[–]</div>
+          <div style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em">[Home team]</div><div style="text-align: center">[–]</div><div style="text-align: center">[–]</div><div style="text-align: center">[–]</div><div style="text-align: center">–</div><div style="text-align: right; font-weight: 700; font-size: 20px">[–]</div>
+        </div>
+        <div style="font-size: 14px; color: #DCC9B8">Leaders: [Player] [stat] · [Player] [stat]</div>
+      </div>
+      <div style="border-radius: 2px; clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px); background: rgba(22, 7, 7, {{glassA}}); border: 1px solid rgba(226, 176, 74, 0.38); box-shadow: 0 0 18px rgba(226, 176, 74, 0.12), inset 0 1px 0 rgba(255, 236, 214, 0.16), 0 14px 32px rgba(0, 0, 0, 0.4); padding: 18px 22px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; gap: 8px">
+        <div style="font-size: 14px; font-weight: 700; letter-spacing: 0.14em; color: #BBA38C">FINAL</div>
+        <div style="display: flex; justify-content: space-between; font-size: 17px; text-transform: uppercase; letter-spacing: 0.06em"><div>[Team]</div><div style="font-weight: 700">[–]</div></div>
+        <div style="display: flex; justify-content: space-between; font-size: 17px; text-transform: uppercase; letter-spacing: 0.06em"><div>[Team]</div><div style="font-weight: 700">[–]</div></div>
+        <div style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #E2B04A">Box score ›</div>
+      </div>
+      <div style="border-radius: 2px; clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px); background: rgba(22, 7, 7, {{glassA}}); border: 1px solid rgba(226, 176, 74, 0.38); box-shadow: 0 0 18px rgba(226, 176, 74, 0.12), inset 0 1px 0 rgba(255, 236, 214, 0.16), 0 14px 32px rgba(0, 0, 0, 0.4); padding: 18px 22px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; gap: 8px">
+        <div style="font-size: 14px; font-weight: 700; letter-spacing: 0.14em; color: #BBA38C">TONIGHT · [7:30 PM]</div>
+        <div style="font-size: 17px; text-transform: uppercase; letter-spacing: 0.06em">[Team]</div>
+        <div style="font-size: 17px; text-transform: uppercase; letter-spacing: 0.06em">at [Team]</div>
+        <div style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #E2B04A">Season stats ›</div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;nightMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;on&quot;,&quot;off&quot;],&quot;default&quot;:&quot;auto&quot;},&quot;glassOpacity&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.5,&quot;min&quot;:0.3,&quot;max&quot;:0.95,&quot;step&quot;:0.01},&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:720}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { focus: 0 };
+  }
+  renderVals() {
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    const mode = this.props.nightMode ?? 'auto';
+    const night = mode === 'on' || (mode === 'auto' && (nowMin >= 17 * 60 + 41 + 45 || nowMin < 6 * 60 + 58));
+    const base = 'aspect-ratio: 2 / 3.05; border-radius: 3px; border: 1px solid rgba(226, 176, 74, 0.18); padding: 0; display: flex; flex-direction: column; font-family: inherit; overflow: hidden; color: #F3ECE4; ';
+    const picks = Array.from({ length: 7 }, (_, i) => ({
+      title: '[Title ' + (i + 1) + ']',
+      service: '[Service]',
+      style: base + (i === this.state.focus ? 'background: #4E1913; outline: 1px solid #E2B04A; outline-offset: 3px; transform: translateY(-3px) scale(1.04); box-shadow: 0 0 22px rgba(226, 176, 74, 0.35), inset 3px 0 0 #8FD8F0;' : 'background: rgba(56, 16, 14, 0.9);'),
+      pick: () => this.setState({ focus: i })
+    }));
+    return { picks, glassA: this.props.glassOpacity ?? 0.5, nightFilter: night ? 'filter: brightness(0.75) sepia(0.08);' : '' };
+  }
+}
+</script>
+</body>
+</html>

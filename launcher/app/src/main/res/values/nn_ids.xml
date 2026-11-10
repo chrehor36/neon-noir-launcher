@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- NEON: a text or icon's own color, kept while it is shown in the selected (white) color. -->
+    <item name="nn_normal_color" type="id" />
+</resources>

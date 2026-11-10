@@ -1,0 +1,20 @@
+# Keys and signing: never commit
+local.properties
+secrets.properties
+*.jks
+*.keystore
+# Build output
+.gradle/
+build/
+app/build/
+*.apk
+# Backups pulled from the TV
+backups/
+shots/
+.DS_Store
+# Claude Code's local settings and session files
+.claude/
+
+# Inspiration pictures and TV photos: personal reference, not for a public repo
+design/inspiration/
+reference/current-tv/

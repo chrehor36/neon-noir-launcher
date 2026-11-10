@@ -1,0 +1,28 @@
+{
+  "background_color": "#0A0606",
+  "wallpaper": true,
+  "wallpaper_rotation_minutes": 30,
+  "wallpaper_order": "sequential",
+  "wallpaper_moods": {
+    "morning": ["morning.jpg"],
+    "evening": ["evening.jpg"],
+    "night": ["night.jpg"]
+  },
+  "wallpaper_dim": 0,
+  "wallpaper_true_color": true,
+  "columns": 6,
+  "dock_title": false,
+  "dock_glass": true,
+  "dock_opacity": 50,
+  "dock_even_padding": true,
+  "glass_style": "rim",
+  "icon_only_buttons": true,
+  "ambient_glow": false,
+  "app_glow": false,
+  "focus_overshoot": false,
+  "tile_menu": true,
+  "home_idle_clock_minutes": 30,
+  "clock_wallpaper": true,
+  "clock_wallpaper_dim": 40,
+  "clock_glow": false
+}

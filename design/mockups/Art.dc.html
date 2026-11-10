@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Art Mode</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&amp;family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#E2B04A}a:hover{color:#F0BC72}
+@keyframes rain{from{background-position:0 0}to{background-position:-120px 720px}}
+@keyframes flicker{0%,92%,100%{opacity:1}93%{opacity:0.55}95%{opacity:1}97%{opacity:0.7}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-24px) scale(1.08)}}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; box-sizing: border-box; background: {{sky}}; color: #F3ECE4; font-family: Arimo, 'Helvetica Neue', Helvetica, sans-serif; position: relative; overflow: hidden; {{nightFilter}}">
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 38%; background: {{ground1}}"></div>
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 22%; background: {{ground2}}"></div>
+  <div style="{{sunStyle}}"></div>
+  <div style="position: absolute; width: 48%; height: 31%; background: {{hill1}}; left: 6%; bottom: 30%; border-radius: 50% 50% 0 0"></div>
+  <div style="position: absolute; width: 36%; height: 23%; background: {{hill2}}; right: 4%; bottom: 30%; border-radius: 60% 40% 0 0"></div>
+  <div style="position: absolute; left: 32px; bottom: 28px; padding: 7px 14px 7px 12px; border-radius: 2px; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); background: rgba(16, 6, 6, {{scrim}}); border: 1px solid rgba(226, 176, 74, 0.32); box-shadow: inset 2px 0 0 #E2B04A; display: flex; gap: 8px; align-items: baseline; white-space: nowrap; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #BBA38C">
+    <div style="font-family: Fraunces, Georgia, serif; font-style: italic; font-size: 14px; letter-spacing: 0; text-transform: none; color: #F3ECE4">[Artwork title]</div>
+    <div>·</div>
+    <div style="font-weight: 700; color: #E2B04A">[Artist]</div>
+    <div>·</div>
+    <div>[Year]</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;nightMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;on&quot;,&quot;off&quot;],&quot;default&quot;:&quot;auto&quot;},&quot;captionShade&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.55,&quot;min&quot;:0,&quot;max&quot;:0.9,&quot;step&quot;:0.05},&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:720}}">
+class Component extends DCLogic {
+  renderVals() {
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    const mode = this.props.nightMode ?? 'auto';
+    const night = mode === 'on' || (mode === 'auto' && (nowMin >= 17 * 60 + 41 + 45 || nowMin < 6 * 60 + 58));
+    const day = { sky: '#C9B79C', ground1: '#5E6B5A', ground2: '#3E4A3F', hill1: '#8C8A6E', hill2: '#6F7A63', sun: '#D9774B' };
+    const dark = { sky: '#121722', ground1: '#1B2029', ground2: '#101318', hill1: '#262B33', hill2: '#1F242C', sun: '#CFC5AE' };
+    const p = night ? dark : day;
+    return {
+      sky: p.sky, ground1: p.ground1, ground2: p.ground2, hill1: p.hill1, hill2: p.hill2,
+      sunStyle: 'position: absolute; border-radius: 50%; background: ' + p.sun + '; ' + (night ? 'width: 110px; height: 110px; left: 70%; top: 12%;' : 'width: 240px; height: 240px; left: 64%; top: 14%;'),
+      nightFilter: night ? 'filter: brightness(0.75) sepia(0.08);' : '',
+      scrim: this.props.captionShade ?? 0.55
+    };
+  }
+}
+</script>
+</body>
+</html>

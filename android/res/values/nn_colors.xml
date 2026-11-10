@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from design/tokens.json. Android colors are #AARRGGBB. -->
+<resources>
+    <!-- dark -->
+    <color name="nn_dark_background">#0A0606</color>
+    <color name="nn_dark_text">#F3ECE4</color>
+    <color name="nn_dark_text_secondary">#DCC9B8</color>
+    <color name="nn_dark_label">#BBA38C</color>
+    <color name="nn_dark_accent_gold">#E2B04A</color>
+    <color name="nn_dark_tile">#38100E</color>
+    <color name="nn_dark_tile_selected">#4E1913</color>
+    <color name="nn_dark_focus_outline">#E2B04A</color>
+    <color name="nn_dark_focus_bar">#8FD8F0</color>
+    <color name="nn_dark_live_dot">#E0533B</color>
+    <color name="nn_dark_glass_fill">#80160707</color>
+    <color name="nn_dark_glass_edge">#61E2B04A</color>
+    <color name="nn_dark_rain">#0FF0C8AA</color>
+    <color name="nn_dark_scanline">#2E000000</color>
+    <!-- light -->
+    <color name="nn_light_background">#F3ECE2</color>
+    <color name="nn_light_text">#2A0F10</color>
+    <color name="nn_light_text_secondary">#5E3E36</color>
+    <color name="nn_light_label">#7A5A50</color>
+    <color name="nn_light_accent_gold">#A8701A</color>
+    <color name="nn_light_tile">#FFF8F0</color>
+    <color name="nn_light_tile_selected">#A8131D</color>
+    <color name="nn_light_tile_selected_text">#FFF6EC</color>
+    <color name="nn_light_focus_outline">#B07A1E</color>
+    <color name="nn_light_focus_bar">#E2B04A</color>
+    <color name="nn_light_live_dot">#E0533B</color>
+    <color name="nn_light_glass_fill">#80FFFAF4</color>
+    <color name="nn_light_glass_edge">#73A8701A</color>
+    <color name="nn_light_rain">#126E281E</color>
+    <color name="nn_light_scanline">#093C1414</color>
+    <!-- jazz_dark -->
+    <color name="nn_jazz_dark_background">#160504</color>
+    <color name="nn_jazz_dark_text">#D8CCBF</color>
+    <color name="nn_jazz_dark_label">#9A8572</color>
+    <color name="nn_jazz_dark_accent">#B08A45</color>
+    <color name="nn_jazz_dark_accent_deep">#9C7A3E</color>
+    <color name="nn_jazz_dark_button">#3A1310</color>
+    <color name="nn_jazz_dark_record_label">#5E1414</color>
+    <!-- jazz_light -->
+    <color name="nn_jazz_light_background">#EDE3D3</color>
+    <color name="nn_jazz_light_text">#2A0F10</color>
+    <color name="nn_jazz_light_label">#7A5A50</color>
+    <color name="nn_jazz_light_accent">#94661A</color>
+    <color name="nn_jazz_light_button">#A8131D</color>
+    <color name="nn_jazz_light_button_text">#FFF6EC</color>
+    <color name="nn_jazz_light_record_label">#5E1414</color>
+</resources>

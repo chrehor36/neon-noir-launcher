@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>All Apps (Neon Noir)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&amp;family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#E2B04A}a:hover{color:#F0BC72}
+@keyframes rain{from{background-position:0 0}to{background-position:-120px 720px}}
+@keyframes flicker{0%,92%,100%{opacity:1}93%{opacity:0.55}95%{opacity:1}97%{opacity:0.7}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-24px) scale(1.08)}}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; box-sizing: border-box; background: #0A0606; color: #F3ECE4; font-family: Arimo, 'Helvetica Neue', Helvetica, sans-serif; position: relative; overflow: hidden; {{nightFilter}}">
+  <div aria-hidden="true" style="position: absolute; width: 760px; height: 760px; right: -160px; top: -300px; border-radius: 50%; background: radial-gradient(circle, rgba(168, 19, 29, 0.50) 0%, rgba(0, 0, 0, 0) 65%); animation: drift 24s ease-in-out infinite"></div>
+  <div aria-hidden="true" style="position: absolute; width: 680px; height: 680px; left: -200px; top: 60px; border-radius: 50%; background: radial-gradient(circle, rgba(40, 80, 150, 0.26) 0%, rgba(0, 0, 0, 0) 65%); animation: drift 30s ease-in-out infinite reverse"></div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; background-image: repeating-linear-gradient(105deg, rgba(240, 200, 170, 0.06) 0px, rgba(240, 200, 170, 0.06) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 22px); background-size: 120px 720px; animation: rain 1.6s linear infinite; pointer-events: none"></div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0px, rgba(0, 0, 0, 0.18) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px); pointer-events: none"></div>
+  <div style="position: relative; height: 100%; box-sizing: border-box; padding: 34px 64px; display: flex; flex-direction: column; gap: 26px">
+  <div style="display: flex; align-items: center; gap: 22px">
+    <a href="HomeNoirCrimsonFrost.dc.html" style="height: 50px; padding: 0 20px 0 14px; border-radius: 2px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); background: rgba(22, 7, 7, {{glassA}}); border: 1px solid rgba(226, 176, 74, 0.38); box-shadow: 0 0 18px rgba(226, 176, 74, 0.12), inset 0 1px 0 rgba(255, 236, 214, 0.16), 0 14px 32px rgba(0, 0, 0, 0.4); color: #F3ECE4; text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+      Home
+    </a>
+    <div style="font-size: 38px; letter-spacing: 0.32em; text-transform: uppercase; line-height: 1; text-shadow: -2px 0 rgba(224, 38, 46, 0.55), 2px 0 rgba(226, 176, 74, 0.55); animation: flicker 9s linear infinite">All apps</div>
+    <div style="font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: #BBA38C">{{count}} installed</div>
+    <div style="flex: 1"></div>
+    <div style="display: flex; gap: 6px; padding: 5px; border-radius: 2px; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); background: rgba(22, 7, 7, {{glassA}}); border: 1px solid rgba(226, 176, 74, 0.38); box-shadow: 0 0 18px rgba(226, 176, 74, 0.12), inset 0 1px 0 rgba(255, 236, 214, 0.16), 0 14px 32px rgba(0, 0, 0, 0.4);">
+      <sc-for list="{{sorts}}" as="so" hint-placeholder-count="2">
+        <button onClick="{{so.pick}}" style="{{so.style}}">{{so.label}}</button>
+      </sc-for>
+    </div>
+  </div>
+  <div style="flex: 1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 20px; align-content: start">
+    <sc-for list="{{apps}}" as="a" hint-placeholder-count="18">
+      <button onClick="{{a.pick}}" aria-label="{{a.name}}" style="{{a.style}}">{{a.name}}</button>
+    </sc-for>
+  </div>
+  <div style="display: flex; align-items: center; gap: 14px; font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: #BBA38C">
+    <div style="padding: 6px 14px; border-radius: 2px; border: 1px solid rgba(226, 176, 74, 0.45); color: #E2B04A; font-weight: 700">Hold OK</div>
+    <div>on any app for options: Move to front · App info · Uninstall</div>
+  </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;nightMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;on&quot;,&quot;off&quot;],&quot;default&quot;:&quot;auto&quot;},&quot;glassOpacity&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.5,&quot;min&quot;:0.3,&quot;max&quot;:0.95,&quot;step&quot;:0.01},&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:720}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { focus: 0, sort: 'az' };
+  }
+  renderVals() {
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    const mode = this.props.nightMode ?? 'auto';
+    const night = mode === 'on' || (mode === 'auto' && (nowMin >= 17 * 60 + 41 + 45 || nowMin < 6 * 60 + 58));
+    const installed = ['Apple TV', 'Disney+', 'Hulu', 'Max', 'Netflix', 'Paramount+', 'Peacock', 'Plex', 'Prime Video', 'Spotify', 'YouTube', 'YouTube Music', 'Tubi', 'Pluto TV', 'Twitch', 'Kodi', 'Files', 'Web Browser'];
+    const byUse = ['Spotify', 'Netflix', 'YouTube', 'Prime Video', 'Disney+', 'Plex'];
+    const list = this.state.sort === 'az'
+      ? installed.slice().sort((a, b) => a.localeCompare(b))
+      : byUse.concat(installed.filter((n) => byUse.indexOf(n) < 0));
+    const tile = 'aspect-ratio: 16 / 9; border-radius: 3px; border: 1px solid rgba(226, 176, 74, 0.18); color: #F3ECE4; font-family: inherit; font-size: 15px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; ';
+    const chip = 'height: 40px; padding: 0 18px; border-radius: 2px; border: none; font-family: inherit; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; ';
+    return {
+      glassA: this.props.glassOpacity ?? 0.5,
+      nightFilter: night ? 'filter: brightness(0.75) sepia(0.08);' : '',
+      count: installed.length,
+      sorts: [
+        { label: 'A–Z', style: chip + (this.state.sort === 'az' ? 'background: #4E1913; color: #F3ECE4; box-shadow: inset 0 -2px 0 #E2B04A;' : 'background: transparent; color: #BBA38C;'), pick: () => this.setState({ sort: 'az' }) },
+        { label: 'Most used', style: chip + (this.state.sort === 'used' ? 'background: #4E1913; color: #F3ECE4; box-shadow: inset 0 -2px 0 #E2B04A;' : 'background: transparent; color: #BBA38C;'), pick: () => this.setState({ sort: 'used' }) }
+      ],
+      apps: list.map((n, i) => ({ name: n, style: tile + (i === this.state.focus ? 'background: #4E1913; outline: 1px solid #E2B04A; outline-offset: 3px; transform: translateY(-3px) scale(1.04); box-shadow: 0 0 22px rgba(226, 176, 74, 0.35), inset 3px 0 0 #8FD8F0;' : 'background: rgba(56, 16, 14, 0.9);'), pick: () => this.setState({ focus: i }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>
