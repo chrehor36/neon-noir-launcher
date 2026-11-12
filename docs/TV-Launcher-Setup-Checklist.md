@@ -56,7 +56,7 @@ Build in six phases, and don't start the next one until the current one works on
 
 1. **Core home**: dark-mode Home, the clock, a dock of recent apps (needs app-usage permission granted over ADB), All apps, Settings
     - [ ] Done when: it boots as the home screen and every dock button works with the remote
-2. **Art Mode**: set up as the TV's screensaver, 30-minute idle timer, caption, dark art only at night
+2. **Art Mode**: set up as the TV's screensaver, 15-minute idle timer, caption, dark art only at night
     - [ ] Done when: it starts on its own after 30 min and any button returns to Home
 3. **Live info**: weather sky glow, sunset-based night mode, the Scores chip and box scores, Picks for you
     - [ ] Done when: the data refreshes on its own and the screen still works offline

@@ -66,7 +66,8 @@ so multiply sizes by 1.5.
 - **Layout:** a clock chip at the top left, then "After hours", then the turntable in a glass frame. Under
   it is the record title (Fraunces), the artist, and a Pick another button.
 - **Dock:** Open Spotify plus 3 jazz playlist cards. The cards rotate through 10+ playlists, 3 at a time,
-  every 15 s or with the arrow button.
+  every 15 s, or with the back and next arrows after the cards (page dots under both; both wrap around).
+  The 15 s turn waits while a card or an arrow is selected.
 - **What counts as jazz:** jazz, crooners and vocal pop.
 - **Colors:** dimmer than Home (antique brass, oxblood, warm gray). Light mode has its own light Jazz palette.
 - **Record:** spins for 20 s after a pick.
@@ -76,8 +77,14 @@ so multiply sizes by 1.5.
 - **When it starts:** after 15 min with no remote input on Home, or from the frame icon. It is also the TV's own
   screensaver (ArtDream, 15 min) in place of Google's photo screensaver, which is switched off. Apps playing
   video keep it away. Any button goes back.
-- **Art:** fills the screen with one small caption: Title · Artist · Year.
-- **At night:** only darker artworks.
+- **Back to your app:** TCL's firmware closes some apps (Peacock, for one) as soon as anything covers them,
+  the screensaver included. Art Mode notes the app it covered and opens it again when you wake the TV, unless
+  you wake it with Home.
+- **Art:** a new painting every 5 minutes with a slow crossfade, and one small caption: Title · Artist · Year.
+- **Which paintings:** about 200 landscape-shaped public-domain paintings from the Art Institute of Chicago,
+  refreshed weekly, none repeated within the last 40. Black-and-white photographs of paintings are skipped.
+  The museum's search pages only its first 1,000 results, so each refresh reads pages 1-10 in either id order.
+- **At night:** only darker artworks (about 30), shown in turn before any repeats.
 - **Base to build on:** the reference launcher's `ClockDream` (a DreamService).
 
 ## Night mode

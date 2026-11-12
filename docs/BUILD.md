@@ -66,7 +66,7 @@ adb shell appops set io.github.chrehor36.neonnoir GET_USAGE_STATS allow
 Night mode needs no permission: it dims only the launcher's own screens, never other apps. Its times are in
 Launcher settings > Night mode (default 9 PM to 6 AM).
 
-Optional: Art Mode as the TV's own screensaver too (it already starts on Home after 30 idle minutes):
+Optional: Art Mode as the TV's own screensaver too (it already starts on Home after 15 idle minutes):
 
 ```bash
 adb shell settings put secure screensaver_components io.github.chrehor36.neonnoir/.ArtDream

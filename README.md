@@ -28,7 +28,7 @@ Target TV: TCL 75QM7L Pro (Google TV 14, 4K).
 The theme gets most of the look onto the TV on day one, with no code. The fork adds the features a
 theme can't, because the reference launcher has no network access and themes only change its look.
 
-## Status (Nov 9, 2026)
+## Status (Nov 12, 2026)
 
 Running daily on the TCL as its Home screen: Home (clock, day name, date with weather, Tonight, Continue and
 Scores chips, favorites dock, More), sky glows that follow the time of day, night mode on set times, All apps, Jazz
