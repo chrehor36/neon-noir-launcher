@@ -218,27 +218,6 @@ final class NeonJazzView extends FrameLayout {
         dlp.rightMargin = ui.m(14);
         dock.addView(divider, dlp);
 
-        // The back arrow, mirroring the next arrow after the cards. A blank row under it, the height of the page
-        // dots under the next arrow, keeps the two arrows level.
-        LinearLayout backCol = ui.column();
-        backCol.setGravity(Gravity.CENTER_HORIZONTAL);
-        LinearLayout back = ui.row();
-        back.setGravity(Gravity.CENTER);
-        back.setContentDescription("Show previous playlists");
-        TextView backChevron = ui.text(20, p.text, ui.bold);
-        backChevron.setText("‹");
-        back.addView(backChevron);
-        ui.glassButton(back, 2, p.jazzCard, NeonUi.withAlpha(p.jazzAccent, 71));
-        back.setOnClickListener(v -> showPage(page - 1));
-        arrows.add(back);
-        backCol.addView(back, new LinearLayout.LayoutParams(ui.m(40), ui.m(40)));
-        LinearLayout.LayoutParams bsp = new LinearLayout.LayoutParams(ui.m(7), ui.m(7));
-        bsp.topMargin = ui.m(8);
-        backCol.addView(new View(getContext()), bsp);
-        LinearLayout.LayoutParams bcp = NeonUi.wrap();
-        bcp.rightMargin = ui.m(14);
-        dock.addView(backCol, bcp);
-
         for (int i = 0; i < 3; i++) {
             LinearLayout card = ui.column();
             card.setGravity(Gravity.CENTER_VERTICAL);
@@ -257,8 +236,27 @@ final class NeonJazzView extends FrameLayout {
             cards.add(card);
         }
 
+        // Back and next arrows side by side after the cards, the page dots under both.
         LinearLayout arrowCol = ui.column();
         arrowCol.setGravity(Gravity.CENTER_HORIZONTAL);
+        LinearLayout arrowRow = ui.row();
+        // A focused arrow lifts; let it draw outside its row and column.
+        arrowRow.setClipChildren(false);
+        arrowRow.setClipToPadding(false);
+        arrowCol.setClipChildren(false);
+        arrowCol.setClipToPadding(false);
+        LinearLayout back = ui.row();
+        back.setGravity(Gravity.CENTER);
+        back.setContentDescription("Show previous playlists");
+        TextView backChevron = ui.text(20, p.text, ui.bold);
+        backChevron.setText("‹");
+        back.addView(backChevron);
+        ui.glassButton(back, 2, p.jazzCard, NeonUi.withAlpha(p.jazzAccent, 71));
+        back.setOnClickListener(v -> showPage(page - 1));
+        arrows.add(back);
+        LinearLayout.LayoutParams backLp = new LinearLayout.LayoutParams(ui.m(40), ui.m(40));
+        backLp.rightMargin = ui.m(10);
+        arrowRow.addView(back, backLp);
         LinearLayout arrow = ui.row();
         arrow.setGravity(Gravity.CENTER);
         arrow.setContentDescription("Show next playlists");
@@ -268,7 +266,8 @@ final class NeonJazzView extends FrameLayout {
         ui.glassButton(arrow, 2, p.jazzCard, NeonUi.withAlpha(p.jazzAccent, 71));
         arrow.setOnClickListener(v -> showPage(page + 1));
         arrows.add(arrow);
-        arrowCol.addView(arrow, new LinearLayout.LayoutParams(ui.m(40), ui.m(40)));
+        arrowRow.addView(arrow, new LinearLayout.LayoutParams(ui.m(40), ui.m(40)));
+        arrowCol.addView(arrowRow, NeonUi.wrap());
         LinearLayout dotRow = ui.row();
         int pages = Math.max(1, (playlists.size() + 2) / 3);
         for (int i = 0; i < pages; i++) {
