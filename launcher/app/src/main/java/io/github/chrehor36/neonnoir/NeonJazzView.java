@@ -85,6 +85,9 @@ final class NeonJazzView extends FrameLayout {
         clockChip.addView(dayName, ui.wrap(12));
         shortDate = ui.caps("", 15, p.jazzAccent, false, 0.14f);
         clockChip.addView(shortDate, ui.wrap(12));
+        // Never cut the day short ("WEDNES…"); the chip grows with the word.
+        dayName.setEllipsize(null);
+        shortDate.setEllipsize(null);
         top.addView(clockChip, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
         top.addView(ui.spacer());
         LinearLayout exit = ui.row();

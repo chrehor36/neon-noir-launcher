@@ -213,17 +213,22 @@ final class NeonHome extends FrameLayout {
         dayMain = dayText(palette.text);
         dayGold.setTranslationX(m(2));
         dayRed.setTranslationX(-m(2));
-        day.addView(dayGold);
-        day.addView(dayRed);
-        day.addView(dayMain);
-        LinearLayout.LayoutParams dayLp = NeonUi.wrap();
+        // The day name and the date line span the full width with their text centered, so their boxes never
+        // have to resize when the day changes at midnight. Sized to the word, they could keep the old day's
+        // width and cut the new one short ("TUES…", "WEDNESDA").
+        FrameLayout.LayoutParams full = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        day.addView(dayGold, new FrameLayout.LayoutParams(full));
+        day.addView(dayRed, new FrameLayout.LayoutParams(full));
+        day.addView(dayMain, new FrameLayout.LayoutParams(full));
+        LinearLayout.LayoutParams dayLp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         dayLp.topMargin = m(16);
         center.addView(day, dayLp);
 
         dateLine = ui.text(17, palette.textSecondary, ui.regular);
         dateLine.setLetterSpacing(0.3f);
-        dateLine.setAllCaps(true);
-        LinearLayout.LayoutParams dateLp = NeonUi.wrap();
+        dateLine.setEllipsize(null);
+        dateLine.setGravity(Gravity.CENTER_HORIZONTAL);
+        LinearLayout.LayoutParams dateLp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         dateLp.topMargin = m(16);
         center.addView(dateLine, dateLp);
 
@@ -273,9 +278,10 @@ final class NeonHome extends FrameLayout {
     private TextView dayText(int color) {
         TextView t = ui.text(50, color, ui.regular);
         t.setLetterSpacing(0.42f);
-        // Never cut the day name short: with wide letter spacing Android can measure the word a few pixels
-        // narrower than it draws and show "TUES…". The text is uppercased in updateDay() for the same reason.
+        // Never cut the day name short ("TUES…"): no ellipsis, a full-width box (see the layout above), and the
+        // text uppercased in updateDay() rather than by setAllCaps.
         t.setEllipsize(null);
+        t.setGravity(Gravity.CENTER_HORIZONTAL);
         // Letter-spacing adds space after the last letter too; the same space before it keeps the word centered.
         t.setPadding(Math.round(m(50) * 0.42f), 0, 0, 0);
         return t;
@@ -390,7 +396,7 @@ final class NeonHome extends FrameLayout {
         for (TextView t : new TextView[]{dayGold, dayRed, dayMain}) t.setText(dayName);
         String date = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(now);
         String weather = NeonSky.now(getContext()).weather;
-        dateLine.setText(weather == null ? date : date + " · " + weather);
+        dateLine.setText((weather == null ? date : date + " · " + weather).toUpperCase(Locale.getDefault()));
     }
 
     private void updateSky() {
