@@ -85,6 +85,10 @@ so multiply sizes by 1.5.
   refreshed weekly, none repeated within the last 40. Black-and-white photographs of paintings are skipped.
   The museum's search pages only its first 1,000 results, so each refresh reads pages 1-10 in either id order.
 - **At night:** only darker artworks (about 30), shown in turn before any repeats.
+- **Style (for now: Romanticism):** `NeonArt.STYLE` narrows the pool. `"romanticism"` keeps Western paintings
+  begun 1780-1850 plus anything the museum tags "romantic" (about 75 that fit a TV; the museum tags few works
+  with a style, so the era stands in for it). At night it uses the 20 darkest of them. `""` goes back to every
+  painting. Each style keeps its own pool file, so a change takes effect at once.
 - **Base to build on:** the reference launcher's `ClockDream` (a DreamService).
 
 ## Night mode

@@ -40,8 +40,18 @@ final class NeonArt {
         }
     }
 
-    /** v3: pools from before the 1,000-result fix and the black-and-white filter; a new name makes every TV fetch afresh. */
-    private static final String POOL = "art_pool_v3.json";
+    /**
+     * What Art Mode shows: "" for all of the museum's public-domain paintings, or "romanticism" for Western
+     * paintings of the Romantic era (begun 1780-1850, Europe and the US) plus any the museum tags "romantic".
+     * The museum tags only a handful of works with a style, so the era stands in for it.
+     */
+    static final String STYLE = "romanticism";
+
+    /** v3: pools from before the 1,000-result fix and the black-and-white filter. Each style keeps its own pool,
+     *  so changing STYLE fetches afresh. */
+    private static final String POOL = "art_pool_v3" + (STYLE.isEmpty() ? "" : "_" + STYLE) + ".json";
+    /** The fewest works night mode draws from: when fewer are dark enough, the darkest this many are used. */
+    private static final int NIGHT_MIN = 20;
     private static final long WEEK = 7L * 24 * 3600_000L;
     /** Dominant-color lightness (0-100) at or under which a work counts as dark enough for night. */
     static final int NIGHT_MAX_LIGHTNESS = 38;
@@ -61,6 +71,12 @@ final class NeonArt {
         if (pool.isEmpty()) return null;
         List<Work> fit = new ArrayList<>();
         for (Work w : pool) if (!night || w.lightness <= NIGHT_MAX_LIGHTNESS) fit.add(w);
+        if (night && fit.size() < NIGHT_MIN) {
+            // A small pool (one style) has few truly dark works: take the darkest NIGHT_MIN instead.
+            fit = new ArrayList<>(pool);
+            Collections.sort(fit, (a, b) -> Integer.compare(a.lightness, b.lightness));
+            fit = new ArrayList<>(fit.subList(0, Math.min(NIGHT_MIN, fit.size())));
+        }
         if (fit.isEmpty()) fit = pool;
         SharedPreferences p = ctx.getSharedPreferences("neon_art", Context.MODE_PRIVATE);
         List<String> recent = new ArrayList<>(java.util.Arrays.asList(p.getString("recent", "").split(",")));
@@ -112,18 +128,36 @@ final class NeonArt {
      * search has about 1,900 works but only its first 1,000 can be paged, so each page is taken in ascending
      * or descending id order: between the two, every work can turn up.
      */
+    /** Countries (and a few cities the museum uses as places) counted as Western for the Romantic era. */
+    private static final String WESTERN = "\"France\",\"England\",\"Great Britain\",\"United Kingdom\",\"Scotland\","
+            + "\"Ireland\",\"Germany\",\"Austria\",\"Switzerland\",\"Italy\",\"Naples\",\"Rome\",\"Spain\","
+            + "\"Netherlands\",\"Holland\",\"Belgium\",\"Denmark\",\"Norway\",\"Sweden\",\"Russia\",\"Poland\","
+            + "\"Hungary\",\"United States\"";
+
+    /** The search's filter clauses after "must": public-domain paintings with an image, narrowed by STYLE. */
+    private static String filter() {
+        String must = "\"must\":[{\"term\":{\"is_public_domain\":true}},"
+                + "{\"term\":{\"artwork_type_title.keyword\":\"Painting\"}},{\"exists\":{\"field\":\"image_id\"}}]";
+        if (!"romanticism".equals(STYLE)) return must;
+        return must + ",\"should\":[{\"bool\":{\"must\":[{\"range\":{\"date_start\":{\"gte\":1780,\"lte\":1850}}},"
+                + "{\"terms\":{\"place_of_origin.keyword\":[" + WESTERN + "]}}]}},"
+                + "{\"term\":{\"style_titles.keyword\":\"romantic\"}}],\"minimum_should_match\":1";
+    }
+
     private static List<Work> fetch(Context ctx) {
         List<Work> out = new ArrayList<>();
         java.util.Set<String> seen = new java.util.HashSet<>();
         Random r = new Random();
         List<Integer> pages = new ArrayList<>();
-        for (int i = 0; i < MAX_PAGE * 2; i++) pages.add(i);
-        Collections.shuffle(pages, r);
-        for (int k = 0; k < PAGES; k++) {
+        // One style is a small search (a couple of hundred works): read it all, page by page, in id order.
+        // All paintings: five random pages, each in either id order.
+        boolean all = !STYLE.isEmpty();
+        for (int i = 0; i < (all ? MAX_PAGE : MAX_PAGE * 2); i++) pages.add(i);
+        if (!all) Collections.shuffle(pages, r);
+        for (int k = 0; k < (all ? MAX_PAGE : PAGES); k++) {
             int page = pages.get(k) % MAX_PAGE + 1;
             String order = pages.get(k) < MAX_PAGE ? "asc" : "desc";
-            String params = "{\"query\":{\"bool\":{\"must\":[{\"term\":{\"is_public_domain\":true}},"
-                    + "{\"term\":{\"artwork_type_title.keyword\":\"Painting\"}},{\"exists\":{\"field\":\"image_id\"}}]}},"
+            String params = "{\"query\":{\"bool\":{" + filter() + "}},"
                     + "\"sort\":[{\"id\":{\"order\":\"" + order + "\"}}],"
                     + "\"fields\":[\"id\",\"title\",\"artist_title\",\"date_display\",\"image_id\",\"color\",\"thumbnail\"]}";
             String url = "https://api.artic.edu/api/v1/artworks/search?limit=100&page=" + page
@@ -147,6 +181,7 @@ final class NeonArt {
                             o.isNull("date_display") ? "" : o.optString("date_display"),
                             o.getString("image_id"), color == null ? 50 : color.optInt("l", 50)));
                 }
+                if (all && data.length() < 100) break; // The last page of a style's search.
             } catch (Exception ignored) {
                 // A malformed page: the others still count.
             }
