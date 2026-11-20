@@ -37,6 +37,7 @@ public final class LauncherSettingsActivity extends Activity {
     private final TextView[] clockChoices = new TextView[CLOCK_FORMATS.length];
     private TextView wallpaperChoice;
     private TextView nightStartChoice, nightEndChoice;
+    private TextView artChoice;
     private TextView animationsChoice;
     private TextView advancedChoice;
     private TextView followThemeChoice;
@@ -129,6 +130,8 @@ public final class LauncherSettingsActivity extends Activity {
         nightStartChoice.setOnClickListener(v -> showNightPicker(NeonSky.NIGHT_START_KEY, R.string.night_mode_starts));
         nightEndChoice = findViewById(R.id.nightEndChoice);
         nightEndChoice.setOnClickListener(v -> showNightPicker(NeonSky.NIGHT_END_KEY, R.string.night_mode_ends));
+        artChoice = findViewById(R.id.artChoice);
+        artChoice.setOnClickListener(v -> showArtPicker());
         wallpaperChoice = findViewById(R.id.wallpaperChoice);
         wallpaperChoice.setOnClickListener(v -> showWallpaperPicker());
         animationsChoice = findViewById(R.id.animationsChoice);
@@ -272,6 +275,28 @@ public final class LauncherSettingsActivity extends Activity {
                 .show();
     }
 
+    /**
+     * Art Mode's paintings: All paintings, then the moods, styles, subjects and themes (ArtCollections), the
+     * current one checked. Saved at once; Art Mode and the screensaver use it from their next painting.
+     */
+    private void showArtPicker() {
+        List<String> titles = ArtCollections.titles();
+        String current = ArtCollections.current(this).id;
+        int checked = 0;
+        for (int i = 0; i < ArtCollections.ALL.size(); i++) {
+            if (ArtCollections.ALL.get(i).id.equals(current)) checked = i;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.art_mode_label)
+                .setSingleChoiceItems(titles.toArray(new String[0]), checked, (dialog, which) -> {
+                    dialog.dismiss();
+                    ArtCollections.set(this, ArtCollections.ALL.get(which).id);
+                    refresh();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
     /** Off, then every app with a TV entry point by name. Saved at once; it is read on the next boot. */
     private void showOpenOnStartPicker() {
         PackageManager pm = getPackageManager();
@@ -373,6 +398,7 @@ public final class LauncherSettingsActivity extends Activity {
         int[] night = NeonSky.nightTimes(this);
         nightStartChoice.setText(getString(R.string.night_mode_starts, NeonSky.clockLabel(night[0])));
         nightEndChoice.setText(getString(R.string.night_mode_ends, NeonSky.clockLabel(night[1])));
+        artChoice.setText(getString(R.string.art_mode_paintings, ArtCollections.current(this).title()));
         followThemeChoice.setSelected(!hasOnTvChoices());
     }
 

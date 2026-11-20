@@ -85,10 +85,16 @@ so multiply sizes by 1.5.
   refreshed weekly, none repeated within the last 40. Black-and-white photographs of paintings are skipped.
   The museum's search pages only its first 1,000 results, so each refresh reads pages 1-10 in either id order.
 - **At night:** only darker artworks (about 30), shown in turn before any repeats.
-- **Style (for now: Romanticism):** `NeonArt.STYLE` narrows the pool. `"romanticism"` keeps Western paintings
-  begun 1780-1850 plus anything the museum tags "romantic" (about 75 that fit a TV; the museum tags few works
-  with a style, so the era stands in for it). At night it uses the 20 darkest of them. `""` goes back to every
-  painting. Each style keeps its own pool file, so a change takes effect at once.
+- **Which set (Launcher settings > Art Mode):** All paintings, or one collection from `ArtCollections`:
+  - Moods, curated: Jazz bar (Tonalist nocturnes by Whistler and Inness, Ashcan New York, music and café
+    titles, 1855-1929), Nightlife (Degas, Toulouse-Lautrec, Forain, the Ashcan painters), After dark, Romantic
+    era (Western paintings begun 1780-1850), Quiet landscapes, By the water, Museum essentials.
+  - The museum's own labels: styles (Impressionism, Post-Impressionism, Realism, Modernism, Baroque,
+    Renaissance, Japanese, Chinese), subjects (music, leisure, flowers, animals, horses, clouds and sky,
+    interiors, portraits) and the Women artists theme.
+  - A collection is read in full (tens to a few hundred paintings) and keeps upright paintings too, shown whole
+    on a dark ground. Each keeps its own pool file, so switching takes effect with the next painting. At night a
+    small set uses its 20 darkest paintings.
 - **Base to build on:** the reference launcher's `ClockDream` (a DreamService).
 
 ## Night mode

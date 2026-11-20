@@ -123,6 +123,10 @@ final class ArtView extends FrameLayout {
 
     private void show(NeonArt.Work w, Bitmap b) {
         ImageView next = layers[1 - front], old = layers[front];
+        // Wide paintings fill the screen; upright or squarish ones (a collection's café scenes, portraits) are
+        // shown whole on the dark ground, since filling would crop away most of the picture.
+        next.setScaleType(b.getWidth() < b.getHeight() * 1.3f ? ImageView.ScaleType.FIT_CENTER
+                : ImageView.ScaleType.CENTER_CROP);
         next.setImageBitmap(b);
         next.animate().alpha(1f).setDuration(2500).start();
         old.animate().alpha(0f).setDuration(2500).withEndAction(() -> {

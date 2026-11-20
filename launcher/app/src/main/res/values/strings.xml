@@ -71,6 +71,9 @@
     <string name="night_mode_starts">Starts: %1$s</string>
     <string name="night_mode_ends">Ends: %1$s</string>
     <string name="night_mode_hint">Dims the launcher\'s own screens (not other apps) and switches Home to dark mode between these times. Pick the same time for both to turn it off.</string>
+    <string name="art_mode_label">Art Mode</string>
+    <string name="art_mode_paintings">Paintings: %1$s</string>
+    <string name="art_mode_hint">Which paintings Art Mode and the screensaver show: a mood, or one of the Art Institute of Chicago\'s styles, subjects or themes. The new set starts with the next painting.</string>
     <string name="quick_picture">Display</string>
     <string name="quick_network">Network</string>
     <string name="quick_apps">Apps</string>

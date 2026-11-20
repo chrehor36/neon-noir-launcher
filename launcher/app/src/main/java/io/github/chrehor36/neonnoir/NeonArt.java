@@ -18,8 +18,9 @@ import java.util.Random;
 
 /**
  * The paintings for Art Mode: public-domain paintings from the Art Institute of Chicago's open API (no account,
- * CC0 data). A pool of a few hundred landscape-shaped works is kept on disk and refreshed weekly; at night only
- * the darker ones are shown (the API gives each work's dominant color lightness).
+ * CC0 data), narrowed to the collection picked in Launcher settings (see ArtCollections). Each collection's pool
+ * is kept on disk and refreshed weekly; at night only the darker ones are shown (the API gives each work's
+ * dominant color lightness).
  */
 final class NeonArt {
     static final class Work {
@@ -41,15 +42,12 @@ final class NeonArt {
     }
 
     /**
-     * What Art Mode shows: "" for all of the museum's public-domain paintings, or "romanticism" for Western
-     * paintings of the Romantic era (begun 1780-1850, Europe and the US) plus any the museum tags "romantic".
-     * The museum tags only a handful of works with a style, so the era stands in for it.
+     * Each collection (Launcher settings > Art Mode, see ArtCollections) keeps its own pool file, so switching
+     * shows the new paintings at once and switching back needs no fetch. v4: pools before collections.
      */
-    static final String STYLE = "romanticism";
-
-    /** v3: pools from before the 1,000-result fix and the black-and-white filter. Each style keeps its own pool,
-     *  so changing STYLE fetches afresh. */
-    private static final String POOL = "art_pool_v3" + (STYLE.isEmpty() ? "" : "_" + STYLE) + ".json";
+    private static String poolName(ArtCollections.Collection c) {
+        return "art_pool_v4_" + c.id + ".json";
+    }
     /** The fewest works night mode draws from: when fewer are dark enough, the darkest this many are used. */
     private static final int NIGHT_MIN = 20;
     private static final long WEEK = 7L * 24 * 3600_000L;
@@ -67,7 +65,7 @@ final class NeonArt {
 
     /** The next work to show, not one of the last 40. Background thread (may fetch the pool). Null when offline. */
     static Work next(Context ctx, boolean night) {
-        List<Work> pool = pool(ctx);
+        List<Work> pool = pool(ctx, ArtCollections.current(ctx));
         if (pool.isEmpty()) return null;
         List<Work> fit = new ArrayList<>();
         for (Work w : pool) if (!night || w.lightness <= NIGHT_MAX_LIGHTNESS) fit.add(w);
@@ -93,12 +91,12 @@ final class NeonArt {
         return pick;
     }
 
-    private static synchronized List<Work> pool(Context ctx) {
-        File f = new File(ctx.getFilesDir(), POOL);
+    private static synchronized List<Work> pool(Context ctx, ArtCollections.Collection c) {
+        File f = new File(ctx.getFilesDir(), poolName(c));
         List<Work> cached = f.exists() ? parse(read(f)) : Collections.emptyList();
         if (!cached.isEmpty() && System.currentTimeMillis() - f.lastModified() < WEEK) return cached;
-        List<Work> fetched = fetch(ctx);
-        if (fetched.size() >= 20) {
+        List<Work> fetched = fetch(ctx, c);
+        if (fetched.size() >= 10) {
             JSONArray out = new JSONArray();
             for (Work w : fetched) {
                 try {
@@ -123,41 +121,37 @@ final class NeonArt {
     /** The API serves at most the first 1,000 results of a search (10 pages of 100); later pages are a 403. */
     private static final int MAX_PAGE = 10;
 
-    /**
-     * Five random pages of 100 public-domain paintings, kept when wider than tall (they fill a TV well). The
-     * search has about 1,900 works but only its first 1,000 can be paged, so each page is taken in ascending
-     * or descending id order: between the two, every work can turn up.
-     */
-    /** Countries (and a few cities the museum uses as places) counted as Western for the Romantic era. */
-    private static final String WESTERN = "\"France\",\"England\",\"Great Britain\",\"United Kingdom\",\"Scotland\","
-            + "\"Ireland\",\"Germany\",\"Austria\",\"Switzerland\",\"Italy\",\"Naples\",\"Rome\",\"Spain\","
-            + "\"Netherlands\",\"Holland\",\"Belgium\",\"Denmark\",\"Norway\",\"Sweden\",\"Russia\",\"Poland\","
-            + "\"Hungary\",\"United States\"";
-
-    /** The search's filter clauses after "must": public-domain paintings with an image, narrowed by STYLE. */
-    private static String filter() {
+    /** The search's bool clauses: public-domain paintings with an image, narrowed by the collection. */
+    private static String filter(ArtCollections.Collection c) {
         String must = "\"must\":[{\"term\":{\"is_public_domain\":true}},"
-                + "{\"term\":{\"artwork_type_title.keyword\":\"Painting\"}},{\"exists\":{\"field\":\"image_id\"}}]";
-        if (!"romanticism".equals(STYLE)) return must;
-        return must + ",\"should\":[{\"bool\":{\"must\":[{\"range\":{\"date_start\":{\"gte\":1780,\"lte\":1850}}},"
-                + "{\"terms\":{\"place_of_origin.keyword\":[" + WESTERN + "]}}]}},"
-                + "{\"term\":{\"style_titles.keyword\":\"romantic\"}}],\"minimum_should_match\":1";
+                + "{\"term\":{\"artwork_type_title.keyword\":\"Painting\"}},{\"exists\":{\"field\":\"image_id\"}}"
+                + (c.must.isEmpty() ? "" : "," + c.must) + "]";
+        if (c.should.isEmpty()) return must;
+        return must + ",\"should\":[" + c.should + "],\"minimum_should_match\":1";
     }
 
-    private static List<Work> fetch(Context ctx) {
+    /**
+     * All paintings: five random pages of 100, kept when wider than tall (they fill a TV well). That search has
+     * about 1,900 works but only its first 1,000 can be paged, so each page is taken in ascending or descending
+     * id order: between the two, every work can turn up.
+     *
+     * <p>Any other collection is a small search (tens to a few hundred works): it is read in full, and upright
+     * paintings are kept too (Art Mode shows those whole, on a dark ground), since many café and portrait
+     * pictures are taller than wide.
+     */
+    private static List<Work> fetch(Context ctx, ArtCollections.Collection c) {
         List<Work> out = new ArrayList<>();
         java.util.Set<String> seen = new java.util.HashSet<>();
         Random r = new Random();
         List<Integer> pages = new ArrayList<>();
-        // One style is a small search (a couple of hundred works): read it all, page by page, in id order.
-        // All paintings: five random pages, each in either id order.
-        boolean all = !STYLE.isEmpty();
-        for (int i = 0; i < (all ? MAX_PAGE : MAX_PAGE * 2); i++) pages.add(i);
-        if (!all) Collections.shuffle(pages, r);
-        for (int k = 0; k < (all ? MAX_PAGE : PAGES); k++) {
+        boolean whole = !c.isAll();
+        double minAspect = whole ? 0.5 : 1.15;
+        for (int i = 0; i < (whole ? MAX_PAGE : MAX_PAGE * 2); i++) pages.add(i);
+        if (!whole) Collections.shuffle(pages, r);
+        for (int k = 0; k < (whole ? MAX_PAGE : PAGES); k++) {
             int page = pages.get(k) % MAX_PAGE + 1;
             String order = pages.get(k) < MAX_PAGE ? "asc" : "desc";
-            String params = "{\"query\":{\"bool\":{" + filter() + "}},"
+            String params = "{\"query\":{\"bool\":{" + filter(c) + "}},"
                     + "\"sort\":[{\"id\":{\"order\":\"" + order + "\"}}],"
                     + "\"fields\":[\"id\",\"title\",\"artist_title\",\"date_display\",\"image_id\",\"color\",\"thumbnail\"]}";
             String url = "https://api.artic.edu/api/v1/artworks/search?limit=100&page=" + page
@@ -171,7 +165,7 @@ final class NeonArt {
                     JSONObject thumb = o.optJSONObject("thumbnail");
                     if (thumb == null || o.isNull("image_id")) continue;
                     double w = thumb.optDouble("width", 0), h = thumb.optDouble("height", 0);
-                    if (h <= 0 || w / h < 1.15 || w / h > 2.4) continue;
+                    if (h <= 0 || w / h < minAspect || w / h > 2.4) continue;
                     if (!seen.add(String.valueOf(o.optLong("id")))) continue;
                     JSONObject color = o.optJSONObject("color");
                     // Saturation 0-3: the museum has only a black-and-white photograph of the painting (about 1 in 20).
@@ -181,7 +175,7 @@ final class NeonArt {
                             o.isNull("date_display") ? "" : o.optString("date_display"),
                             o.getString("image_id"), color == null ? 50 : color.optInt("l", 50)));
                 }
-                if (all && data.length() < 100) break; // The last page of a style's search.
+                if (whole && data.length() < 100) break; // The last page of a collection's search.
             } catch (Exception ignored) {
                 // A malformed page: the others still count.
             }
