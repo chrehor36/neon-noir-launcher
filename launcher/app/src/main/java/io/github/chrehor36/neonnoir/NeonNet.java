@@ -80,6 +80,25 @@ final class NeonNet {
         }
     }
 
+    /**
+     * Like text(), for a JSON query sent as a POST body: for searches too long to fit in a URL (the Art
+     * Institute refuses GET addresses past about 2,000 characters). Cached by URL and body together.
+     */
+    static String postJson(Context ctx, String url, String json, Map<String, String> headers, long maxAgeMs) {
+        File f = cacheFile(ctx, url + "\n" + json);
+        if (f.exists() && System.currentTimeMillis() - f.lastModified() < maxAgeMs) {
+            String cached = read(f);
+            if (cached != null) return cached;
+        }
+        try {
+            byte[] body = fetch(url, headers, json.getBytes(StandardCharsets.UTF_8));
+            write(f, body);
+            return new String(body, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return f.exists() ? read(f) : null;
+        }
+    }
+
     /** A picture, cached on disk; decoded at most maxWidth wide in RGB_565 (half the memory, no alpha needed). */
     static Bitmap image(Context ctx, String url, int maxWidth) {
         File f = cacheFile(ctx, url);
@@ -109,12 +128,26 @@ final class NeonNet {
     }
 
     static byte[] fetch(String url, Map<String, String> headers) throws IOException {
+        return fetch(url, headers, null);
+    }
+
+    /** GET, or POST of a JSON body when one is given. */
+    static byte[] fetch(String url, Map<String, String> headers, byte[] jsonBody) throws IOException {
         HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
         c.setConnectTimeout(8000);
         c.setReadTimeout(12000);
         c.setRequestProperty("User-Agent", AGENT);
         c.setRequestProperty("Accept-Encoding", "identity");
         if (headers != null) for (Map.Entry<String, String> h : headers.entrySet()) c.setRequestProperty(h.getKey(), h.getValue());
+        if (jsonBody != null) {
+            c.setRequestMethod("POST");
+            c.setDoOutput(true);
+            c.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            c.setFixedLengthStreamingMode(jsonBody.length);
+            try (java.io.OutputStream out = c.getOutputStream()) {
+                out.write(jsonBody);
+            }
+        }
         try {
             int code = c.getResponseCode();
             if (code < 200 || code >= 300) throw new IOException("HTTP " + code);

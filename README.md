@@ -53,13 +53,13 @@ playback control (Jazz mode opens Spotify and its playlists instead). App ID: `i
 
 Spotify (opened with its own links; no account in the launcher), Discogs (the record picker), TMDB (Picks for
 you), Open-Meteo (weather, sunrise and sunset; no account), ESPN's public scoreboard feed (unofficial), and the
-Art Institute of Chicago's open API (Art Mode's public-domain paintings; no account). Nothing else, and no
-analytics.
+Art Institute of Chicago's open API (Art Mode's paintings; no account). Nothing else, and no analytics.
 
 ## Credits and license
 
 MIT, see `LICENSE`. Built on the CleanYourTV launcher by [Gathin](https://github.com/Gathin23) (MIT,
 `launcher/LICENSE-CleanYourTV.txt`). The wallpapers are CC0. Fonts: Arimo and Fraunces (SIL Open Font License).
 Icons drawn after [Lucide](https://lucide.dev) (ISC). Art Mode's paintings come from the
-[Art Institute of Chicago](https://www.artic.edu/open-access) open-access collection (public domain), fetched
-on the TV, not stored here.
+[Art Institute of Chicago](https://www.artic.edu/open-access), fetched on the TV for personal viewing and never
+stored in this repo: public-domain works at full size, and works still in copyright only at the reduced size the
+museum itself publishes for them. Those images belong to their rights holders.

@@ -10,7 +10,8 @@ import java.util.List;
 /**
  * The paintings Art Mode can show, chosen in Launcher settings > Art Mode: every painting, a mood (curated here),
  * or one of the Art Institute of Chicago's own labels (style, subject or theme). Each is a search on the museum's
- * open API, narrowed from its public-domain paintings with an image.
+ * open API, narrowed from its paintings with an image: public-domain ones at full size, and works still in
+ * copyright at the smaller size the museum serves for them (works with no image are left out).
  *
  * <p>The museum labels few paintings with a style, so the moods mix labels, title words and painters: Jazz bar
  * is Tonalist nocturnes (Whistler, Inness) and Ashcan New York, Nightlife the café and cabaret painters (Degas,
@@ -90,6 +91,9 @@ final class ArtCollections {
     private static final String[] ASHCAN = {"John Sloan", "Bellows", "Glackens", "Everett Shinn", "Robert Henri",
             "George Luks", "Ernest Lawson"};
     private static final String[] CAFE = {"Toulouse-Lautrec", "Degas", "Béraud", "Forain"};
+    /** The jazz age and after, in copyright (the museum serves these at a smaller size). */
+    private static final String[] JAZZ_AGE = {"Edward Hopper", "Archibald John Motley", "Stuart Davis",
+            "Jacob Lawrence", "Reginald Marsh", "Beauford Delaney", "Eldzier Cortor", "Thomas Hart Benton"};
 
     private static String[] concat(String[] a, String[] b) {
         String[] out = Arrays.copyOf(a, a.length + b.length);
@@ -107,15 +111,15 @@ final class ArtCollections {
             new Collection(ALL_ID, "", "All paintings", "", ""),
 
             // Moods, curated.
-            new Collection("jazz_bar", "Mood", "Jazz bar", begun(1855, 1929), join(  // ~55
+            new Collection("jazz_bar", "Mood", "Jazz bar", begun(1855, 1960), join(
                     style("Ashcan School"), subject("music"), theme("Drinking and Dining"),
                     titleWords("nocturne night evening moonlight cafe café bar cabaret saloon"),
-                    painters(concat(TONALISTS, ASHCAN)))),
-            new Collection("nightlife", "Mood", "Nightlife", begun(1855, 1929), join(  // ~35
+                    painters(concat(concat(TONALISTS, ASHCAN), JAZZ_AGE)))),
+            new Collection("nightlife", "Mood", "Nightlife", begun(1855, 1960), join(
                     style("Ashcan School"), subject("music"), theme("Drinking and Dining"),
                     titleWords("cafe café cabaret theater theatre opera ball dance dancers dancer concert circus "
                             + "saloon bar music night"),
-                    painters(concat(ASHCAN, CAFE)))),
+                    painters(concat(concat(ASHCAN, CAFE), JAZZ_AGE)))),
             new Collection("after_dark", "Mood", "After dark", "", join(  // ~45
                     titleWords("night nocturne moonlight moonlit evening twilight dusk lamplight sunset"),
                     painters("Whistler", "Inness", "Albert Pinkham Ryder", "Blakelock"))),

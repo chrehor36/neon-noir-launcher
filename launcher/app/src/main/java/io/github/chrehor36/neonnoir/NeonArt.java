@@ -26,18 +26,23 @@ final class NeonArt {
     static final class Work {
         final String id, title, artist, year, imageId;
         final int lightness;
+        /** Public domain: served full size. Otherwise still in copyright, served at most 843 px wide. */
+        final boolean publicDomain;
 
-        Work(String id, String title, String artist, String year, String imageId, int lightness) {
+        Work(String id, String title, String artist, String year, String imageId, int lightness,
+             boolean publicDomain) {
             this.id = id;
             this.title = title;
             this.artist = artist;
             this.year = year;
             this.imageId = imageId;
             this.lightness = lightness;
+            this.publicDomain = publicDomain;
         }
 
         String imageUrl() {
-            return "https://www.artic.edu/iiif/2/" + imageId + "/full/1686,/0/default.jpg";
+            return "https://www.artic.edu/iiif/2/" + imageId + "/full/" + (publicDomain ? 1686 : COPYRIGHT_WIDTH)
+                    + ",/0/default.jpg";
         }
     }
 
@@ -46,8 +51,11 @@ final class NeonArt {
      * shows the new paintings at once and switching back needs no fetch. v4: pools before collections.
      */
     private static String poolName(ArtCollections.Collection c) {
-        return "art_pool_v4_" + c.id + ".json";
+        return "art_pool_v5_" + c.id + ".json";   // v5: works in copyright joined the pools
     }
+
+    /** The widest image the museum serves for a work still in copyright. */
+    static final int COPYRIGHT_WIDTH = 843;
     /** The fewest works night mode draws from: when fewer are dark enough, the darkest this many are used. */
     private static final int NIGHT_MIN = 20;
     private static final long WEEK = 7L * 24 * 3600_000L;
@@ -101,7 +109,8 @@ final class NeonArt {
             for (Work w : fetched) {
                 try {
                     out.put(new JSONObject().put("id", w.id).put("title", w.title).put("artist_title", w.artist)
-                            .put("date_display", w.year).put("image_id", w.imageId).put("l", w.lightness));
+                            .put("date_display", w.year).put("image_id", w.imageId).put("l", w.lightness)
+                            .put("pd", w.publicDomain));
                 } catch (Exception ignored) {
                     // Skip one odd record.
                 }
@@ -123,7 +132,9 @@ final class NeonArt {
 
     /** The search's bool clauses: public-domain paintings with an image, narrowed by the collection. */
     private static String filter(ArtCollections.Collection c) {
-        String must = "\"must\":[{\"term\":{\"is_public_domain\":true}},"
+        // Public domain or not: works in copyright come at a smaller size (see Work.imageUrl), and the museum
+        // leaves out the image of any work it cannot show, so "has an image" is the test.
+        String must = "\"must\":["
                 + "{\"term\":{\"artwork_type_title.keyword\":\"Painting\"}},{\"exists\":{\"field\":\"image_id\"}}"
                 + (c.must.isEmpty() ? "" : "," + c.must) + "]";
         if (c.should.isEmpty()) return must;
@@ -132,8 +143,8 @@ final class NeonArt {
 
     /**
      * All paintings: five random pages of 100, kept when wider than tall (they fill a TV well). That search has
-     * about 1,900 works but only its first 1,000 can be paged, so each page is taken in ascending or descending
-     * id order: between the two, every work can turn up.
+     * about 3,700 works but only its first 1,000 can be paged, so each page is taken in id or date order,
+     * ascending or descending: between the four, nearly every work can turn up.
      *
      * <p>Any other collection is a small search (tens to a few hundred works): it is read in full, and upright
      * paintings are kept too (Art Mode shows those whole, on a dark ground), since many café and portrait
@@ -146,17 +157,19 @@ final class NeonArt {
         List<Integer> pages = new ArrayList<>();
         boolean whole = !c.isAll();
         double minAspect = whole ? 0.5 : 1.15;
-        for (int i = 0; i < (whole ? MAX_PAGE : MAX_PAGE * 2); i++) pages.add(i);
+        String[] sorts = {"id", "date_start"};
+        for (int i = 0; i < (whole ? MAX_PAGE : MAX_PAGE * 4); i++) pages.add(i);
         if (!whole) Collections.shuffle(pages, r);
         for (int k = 0; k < (whole ? MAX_PAGE : PAGES); k++) {
             int page = pages.get(k) % MAX_PAGE + 1;
-            String order = pages.get(k) < MAX_PAGE ? "asc" : "desc";
+            int way = pages.get(k) / MAX_PAGE;   // 0-3: id asc, id desc, date asc, date desc
             String params = "{\"query\":{\"bool\":{" + filter(c) + "}},"
-                    + "\"sort\":[{\"id\":{\"order\":\"" + order + "\"}}],"
-                    + "\"fields\":[\"id\",\"title\",\"artist_title\",\"date_display\",\"image_id\",\"color\",\"thumbnail\"]}";
-            String url = "https://api.artic.edu/api/v1/artworks/search?limit=100&page=" + page
-                    + "&params=" + NeonNet.enc(params);
-            String body = NeonNet.text(ctx, url, HEADERS, WEEK);
+                    + "\"sort\":[{\"" + sorts[way / 2] + "\":{\"order\":\"" + (way % 2 == 0 ? "asc" : "desc")
+                    + "\"}},{\"id\":{\"order\":\"asc\"}}],"
+                    + "\"fields\":[\"id\",\"title\",\"artist_title\",\"date_display\",\"image_id\",\"color\",\"thumbnail\","
+                    + "\"is_public_domain\"],\"limit\":100,\"page\":" + page + "}";
+            // Sent as a POST body: a mood's search (many painters) is too long for a URL.
+            String body = NeonNet.postJson(ctx, "https://api.artic.edu/api/v1/artworks/search", params, HEADERS, WEEK);
             if (body == null) continue;
             try {
                 JSONArray data = new JSONObject(body).getJSONArray("data");
@@ -173,7 +186,8 @@ final class NeonArt {
                     out.add(new Work(String.valueOf(o.optLong("id")), o.optString("title", "Untitled"),
                             o.isNull("artist_title") ? "Unknown artist" : o.optString("artist_title"),
                             o.isNull("date_display") ? "" : o.optString("date_display"),
-                            o.getString("image_id"), color == null ? 50 : color.optInt("l", 50)));
+                            o.getString("image_id"), color == null ? 50 : color.optInt("l", 50),
+                            o.optBoolean("is_public_domain", false)));
                 }
                 if (whole && data.length() < 100) break; // The last page of a collection's search.
             } catch (Exception ignored) {
@@ -191,7 +205,8 @@ final class NeonArt {
             for (int i = 0; i < a.length(); i++) {
                 JSONObject o = a.getJSONObject(i);
                 out.add(new Work(o.getString("id"), o.optString("title"), o.optString("artist_title"),
-                        o.optString("date_display"), o.getString("image_id"), o.optInt("l", 50)));
+                        o.optString("date_display"), o.getString("image_id"), o.optInt("l", 50),
+                        o.optBoolean("pd", false)));
             }
         } catch (Exception e) {
             out.clear();

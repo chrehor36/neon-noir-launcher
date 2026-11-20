@@ -81,13 +81,17 @@ so multiply sizes by 1.5.
   the screensaver included. Art Mode notes the app it covered and opens it again when you wake the TV, unless
   you wake it with Home.
 - **Art:** a new painting every 5 minutes with a slow crossfade, and one small caption: Title · Artist · Year.
-- **Which paintings:** about 200 landscape-shaped public-domain paintings from the Art Institute of Chicago,
-  refreshed weekly, none repeated within the last 40. Black-and-white photographs of paintings are skipped.
-  The museum's search pages only its first 1,000 results, so each refresh reads pages 1-10 in either id order.
+- **Which paintings:** paintings from the Art Institute of Chicago that the museum provides an image for
+  (about 3,700): public-domain ones at full size, and works still in copyright at the smaller size the museum
+  serves for them (843 px wide), shown framed by the dark ground at about 70% of the screen rather than
+  stretched. Refreshed weekly, none repeated within the last 40. Black-and-white photographs of paintings
+  are skipped. Searches go as a POST body (a mood's search is too long for a URL), and the museum pages only
+  its first 1,000 results, so All paintings reads random pages sorted by id or date, either way.
 - **At night:** only darker artworks (about 30), shown in turn before any repeats.
 - **Which set (Launcher settings > Art Mode):** All paintings, or one collection from `ArtCollections`:
-  - Moods, curated: Jazz bar (Tonalist nocturnes by Whistler and Inness, Ashcan New York, music and café
-    titles, 1855-1929), Nightlife (Degas, Toulouse-Lautrec, Forain, the Ashcan painters), After dark, Romantic
+  - Moods, curated: Jazz bar (Tonalist nocturnes by Whistler and Inness, Ashcan New York, the jazz age:
+    Hopper's Nighthawks, Motley's Nightlife, Stuart Davis, Jacob Lawrence, Reginald Marsh; music and café
+    titles; 1855-1960), Nightlife (Degas, Toulouse-Lautrec, Forain, the Ashcan and jazz-age painters), After dark, Romantic
     era (Western paintings begun 1780-1850), Quiet landscapes, By the water, Museum essentials.
   - The museum's own labels: styles (Impressionism, Post-Impressionism, Realism, Modernism, Baroque,
     Renaissance, Japanese, Chinese), subjects (music, leisure, flowers, animals, horses, clouds and sky,

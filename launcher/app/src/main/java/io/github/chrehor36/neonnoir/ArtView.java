@@ -125,7 +125,12 @@ final class ArtView extends FrameLayout {
         ImageView next = layers[1 - front], old = layers[front];
         // Wide paintings fill the screen; upright or squarish ones (a collection's café scenes, portraits) are
         // shown whole on the dark ground, since filling would crop away most of the picture.
-        next.setScaleType(b.getWidth() < b.getHeight() * 1.3f ? ImageView.ScaleType.FIT_CENTER
+        // A work still in copyright comes at most 843 px wide: shown whole and framed by the dark ground (about
+        // 70% of the screen), like a picture on a wall, so it is not stretched soft across a 4K panel.
+        boolean framed = !w.publicDomain;
+        int padX = framed ? Math.round(getWidth() * 0.15f) : 0, padY = framed ? Math.round(getHeight() * 0.13f) : 0;
+        next.setPadding(padX, padY, padX, padY);
+        next.setScaleType(framed || b.getWidth() < b.getHeight() * 1.3f ? ImageView.ScaleType.FIT_CENTER
                 : ImageView.ScaleType.CENTER_CROP);
         next.setImageBitmap(b);
         next.animate().alpha(1f).setDuration(2500).start();
